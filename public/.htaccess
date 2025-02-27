@@ -1,0 +1,17 @@
+# Enable Rewrite Engine
+RewriteEngine On
+
+# Redirect Trailing Slashes If Not A Folder...
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)/$ /$1 [L,R=301]
+
+# Serve Existing Files Directly
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+# Serve Existing Directories Directly
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Redirect All Other Requests to index.html (for React Router)
+RewriteRule ^ /index.html [L]

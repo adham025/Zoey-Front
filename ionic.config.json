@@ -1,0 +1,7 @@
+{
+  "name": "zooeey",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react-vite"
+}
