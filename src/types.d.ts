@@ -1,5 +1,5 @@
 export type Game = {
-  position?: number;
+  order: number;
   id: string;
   title: string;
   description: string;

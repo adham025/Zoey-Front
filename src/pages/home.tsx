@@ -27,7 +27,7 @@ const HomePage: React.FC = () => {
               <IonIcon icon={heart} />
             </IonButton>
           </IonButtons>
-          <IonTitle>Zooeey Games</IonTitle>
+          <IonTitle>Zooeey Games 2562727</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
@@ -64,8 +64,10 @@ const GameList: React.FC<{ searchTerm: string }> = ({ searchTerm }) => {
   const fetchGames = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`http://localhost:3000/api/games`);
-      setGames(response.data.games);
+      const API_URL = "https://zoey-back-production.up.railway.app";
+      const response = await axios.get(`${API_URL}/api/games`);
+      const sortedGames = response.data.games.sort((a: Game, b: Game) => a.order - b.order);  
+      setGames(sortedGames);
     } catch (err) {
       setError("Failed to fetch games");
     } finally {
@@ -78,7 +80,7 @@ const GameList: React.FC<{ searchTerm: string }> = ({ searchTerm }) => {
   }, [fetchGames]);
 
   const getFavicon = async (gameId: string, url: string) => {
-    if (favicons[gameId]) return; // Prevent re-fetching for the same game
+    if (favicons[gameId]) return; 
 
     try {
       const domain = new URL(url).origin;

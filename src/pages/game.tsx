@@ -60,8 +60,9 @@ const GamePage: React.FC<GamePageProps> = ({ match }) => {
     try {
       setLoading(true);
       console.log(`Fetching game with ID: ${id}`);
-  
-      const response = await axios.get(`http://localhost:3000/api/games?gid=${id}`);
+      const API_URL = "https://zoey-back-production.up.railway.app";
+      const response = await axios.get(`${API_URL}/api/games?gid=${id}`);
+      
       console.log("API Response:", response.data);
   
       if (response.data && response.data.games) {
@@ -275,9 +276,8 @@ const RelevantGames = ({ category }: { category?: string[] }) => {
   
     try {
       setLoading(true);
-      const response = await axios.get(
-        `http://localhost:3000/api/games?category=${category.join(",")}`
-      );
+      const API_URL = "https://zoey-back-production.up.railway.app";
+      const response = await axios.get(`${API_URL}/api/games?category=${category.join(",")}`);      
       setGames(response.data.data);
     } catch (err) {
       setError("Failed to fetch games");
