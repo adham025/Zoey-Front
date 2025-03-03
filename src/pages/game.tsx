@@ -14,7 +14,7 @@ import {
   IonCardTitle,
   IonLoading,
 } from "@ionic/react";
-
+import NativeAd from "../pages/NativeAd";
 import { useEffect, useState, useCallback } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import axios from "axios";
@@ -105,6 +105,18 @@ const GamePage: React.FC<GamePageProps> = ({ match }) => {
     }
   }, [game]);
 
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "//pl25996113.effectiveratecpm.com/24/62/a3/2462a3db200158df6288102f27b534f2.js";
+    script.type = "text/javascript";
+    script.async = true;
+    document.body.appendChild(script);
+  
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, [game]); 
+  
   const saveToFav = useCallback(() => {
     if (game) {
       saveGame(game);
@@ -130,6 +142,7 @@ const GamePage: React.FC<GamePageProps> = ({ match }) => {
   if (!game) {
     return <div className="text-center">No game found</div>;
   }
+
 
   return (
     <IonPage>
@@ -220,6 +233,8 @@ const GamePage: React.FC<GamePageProps> = ({ match }) => {
             </IonCard>
 
             {showPlayer && <GamePlayer url={game.url} />}
+{/* <NativeAd /> */}
+
           </div>
 
           <div className="hidden lg:block col-span-2">

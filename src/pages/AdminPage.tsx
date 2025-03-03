@@ -16,6 +16,8 @@ import {
   IonCardTitle,
   IonSpinner,
   IonToast,
+  IonSelect,
+  IonSelectOption,
 } from "@ionic/react";
 import axios from "axios";
 
@@ -24,6 +26,8 @@ const AdminPage: React.FC = () => {
   const [apiName, setApiName] = useState("");
   const [apiUrl, setApiUrl] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  const [gameCategory, setGameCategory] = useState("");
+  const [customCategory, setCustomCategory] = useState(""); // New state for custom category input
   const [loading, setLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [toggledImage, setToggledImage] = useState<string | null>(null);
@@ -46,7 +50,7 @@ const AdminPage: React.FC = () => {
 
   const handleAddApi = async () => {
     if (!apiName || !apiUrl) {
-      setToastMessage("All fields are required!");
+      setToastMessage("API Name and URL are required!");
       return;
     }
     try {
@@ -54,10 +58,13 @@ const AdminPage: React.FC = () => {
         api_name: apiName,
         api_url: apiUrl,
         api_image: imageUrl || "/default-thumbnail.jpg",
+        game_category: customCategory || gameCategory || "Uncategorized", // Use custom category if provided
       });
       setApiName("");
       setApiUrl("");
       setImageUrl("");
+      setGameCategory("");
+      setCustomCategory(""); // Reset custom category input
       fetchApis();
       setToastMessage("API added successfully!");
     } catch (error) {
@@ -95,6 +102,27 @@ const AdminPage: React.FC = () => {
             <IonInput placeholder="API Name" value={apiName} onIonChange={(e) => setApiName(e.detail.value!)} />
             <IonInput placeholder="API URL" value={apiUrl} onIonChange={(e) => setApiUrl(e.detail.value!)} />
             <IonInput placeholder="Image URL (optional)" value={imageUrl} onIonChange={(e) => setImageUrl(e.detail.value!)} />
+
+            {/* Dropdown for predefined categories */}
+            <IonSelect
+              placeholder="Select Category (optional)"
+              value={gameCategory}
+              onIonChange={(e) => setGameCategory(e.detail.value)}
+            >
+              <IonSelectOption value="Action">Action</IonSelectOption>
+              <IonSelectOption value="Puzzle">Puzzle</IonSelectOption>
+              <IonSelectOption value="Adventure">Adventure</IonSelectOption>
+              <IonSelectOption value="Sports">Sports</IonSelectOption>
+              <IonSelectOption value="Racing">Racing</IonSelectOption>
+            </IonSelect>
+
+            {/* Input for custom category */}
+            <IonInput
+              placeholder="Or type a custom category"
+              value={customCategory}
+              onIonChange={(e) => setCustomCategory(e.detail.value!)}
+            />
+
             <IonButton expand="full" className="ion-margin-top" onClick={handleAddApi}>Add API</IonButton>
           </IonCardContent>
         </IonCard>
@@ -115,6 +143,7 @@ const AdminPage: React.FC = () => {
                     <IonLabel>
                       <strong>{api.api_name}</strong>
                       <p>{api.api_url}</p>
+                      <p>Category: {api.game_category || "N/A"}</p>
                     </IonLabel>
                     {api.api_image && api.api_image.startsWith("http") && (
                       <img

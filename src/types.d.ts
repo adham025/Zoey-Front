@@ -1,4 +1,5 @@
 export type Game = {
+  position?: number;
   id: string;
   title: string;
   description: string;

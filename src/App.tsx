@@ -83,27 +83,26 @@ const App: React.FC = () => (
           </Route>
         </IonRouterOutlet>
         <IonTabBar slot="bottom" translucent={true} className="py-2">
-          <IonTabButton
-            tab="admin"
-            href="/admin"
-            disabled={!localStorage.getItem("Admin2025Token")}
-          >
-            <LuUser className="text-2xl" />
-            <IonLabel>Admin</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="home" href="/home">
-            <LuHome className="text-2xl" />
-            <IonLabel>Home</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="categories" href="/categories">
-            <BiCategory className="text-2xl" />
-            <IonLabel>Categories</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="saved" href="/saved">
-            <LuHeart className="text-2xl" />
-            <IonLabel>Saved</IonLabel>
-          </IonTabButton>
-        </IonTabBar>
+  {localStorage.getItem("Admin2025Token") && (
+    <IonTabButton tab="admin" href="/admin">
+      <LuUser className="text-2xl" />
+      <IonLabel>Admin</IonLabel>
+    </IonTabButton>
+  )}
+  <IonTabButton tab="home" href="/home">
+    <LuHome className="text-2xl" />
+    <IonLabel>Home</IonLabel>
+  </IonTabButton>
+  <IonTabButton tab="categories" href="/categories">
+    <BiCategory className="text-2xl" />
+    <IonLabel>Categories</IonLabel>
+  </IonTabButton>
+  <IonTabButton tab="saved" href="/saved">
+    <LuHeart className="text-2xl" />
+    <IonLabel>Saved</IonLabel>
+  </IonTabButton>
+</IonTabBar>
+
       </IonTabs>
     </IonReactRouter>
   </IonApp>
