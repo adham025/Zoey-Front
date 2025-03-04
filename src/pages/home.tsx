@@ -27,7 +27,7 @@ const HomePage: React.FC = () => {
               <IonIcon icon={heart} />
             </IonButton>
           </IonButtons>
-          <IonTitle>Zooeey Games 2562727</IonTitle>
+          <IonTitle>Zooeey Games</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
