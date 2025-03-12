@@ -11,13 +11,13 @@ const RelevantGames: React.FC<RelevantGamesProps> = ({ category }) => {
   const [games, setGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const API_URL = "http://localhost:3000";
 
   const fetchGames = useCallback(async () => {
     if (!category || !Array.isArray(category)) return;
 
     try {
       setLoading(true);
-      const API_URL = "https://zoey-back-production.up.railway.app";
       const response = await axios.get(`${API_URL}/api/games?category=${category.join(",")}`);
       setGames(response.data.data);
     } catch (err) {

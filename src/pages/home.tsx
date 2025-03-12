@@ -13,6 +13,7 @@ import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { heart } from "ionicons/icons";
 import type { Game } from "../types";
+import type { Category } from "../types";
 import { Link } from "react-router-dom";
 
 const HomePage: React.FC = () => {
@@ -56,18 +57,19 @@ const HomePage: React.FC = () => {
 };
 
 const GameList: React.FC<{ searchTerm: string }> = ({ searchTerm }) => {
-  const [games, setGames] = useState<Game[]>([]);
+  const [categoriesWithGames, setCategoriesWithGames] = useState<
+    Record<string, Game[]>
+  >({});
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [favicons, setFavicons] = useState<{ [key: string]: string }>({});
+  const API_URL = "http://localhost:3000";
 
-  const fetchGames = useCallback(async () => {
+  const fetchAllGames = useCallback(async () => {
     try {
       setLoading(true);
-      const API_URL = "https://zoey-back-production.up.railway.app";
       const response = await axios.get(`${API_URL}/api/games`);
-      const sortedGames = response.data.games.sort((a: Game, b: Game) => a.order - b.order);  
-      setGames(sortedGames);
+      const categorizedGames = response.data.games;
+      setCategoriesWithGames(categorizedGames);
     } catch (err) {
       setError("Failed to fetch games");
     } finally {
@@ -76,59 +78,32 @@ const GameList: React.FC<{ searchTerm: string }> = ({ searchTerm }) => {
   }, []);
 
   useEffect(() => {
-    fetchGames();
-  }, [fetchGames]);
-
-  const getFavicon = async (gameId: string, url: string) => {
-    if (favicons[gameId]) return; 
-
-    try {
-      const domain = new URL(url).origin;
-      const faviconUrl = `${domain}/favicon.ico`;
-
-      const response = await fetch(faviconUrl, { method: "HEAD" });
-      if (response.ok) {
-        setFavicons((prev) => ({
-          ...prev,
-          [gameId]: faviconUrl,
-        }));
-      }
-    } catch (error) {
-      console.error("Failed to fetch favicon:", error);
-    }
-  };
-
-  // Fetch favicons only for games without a thumbnailUrl
-  useEffect(() => {
-    games.forEach((game) => {
-      if (!game.thumbnailUrl) {
-        getFavicon(game.id, game.url);
-      }
-    });
-  }, [games]);
+    fetchAllGames();
+  }, [fetchAllGames]);
 
   // Filter games based on search term
-  const filteredGames = games.filter(
-    (game) =>
-      game.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (game.description &&
-        game.description.toLowerCase().includes(searchTerm.toLowerCase()))
+  const filteredCategories = Object.keys(categoriesWithGames).reduce(
+    (acc, category) => {
+      const filteredGames = categoriesWithGames[category].filter(
+        (game) =>
+          game.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (game.description &&
+            game.description.toLowerCase().includes(searchTerm.toLowerCase()))
+      );
+      if (filteredGames.length > 0) {
+        acc[category] = filteredGames;
+      }
+      return acc;
+    },
+    {} as Record<string, Game[]>
   );
-
-  // Categorize games properly
-  const categorizedGames = filteredGames.reduce((acc, game) => {
-    const category = game.categories?.[0] || "Mix";
-    if (!acc[category]) acc[category] = [];
-    acc[category].push(game);
-    return acc;
-  }, {} as Record<string, Game[]>);
 
   if (loading) return <div className="text-center py-10">Loading games...</div>;
   if (error) return <div className="text-center py-10">{error}</div>;
 
   return (
     <div className="container mx-auto">
-      {Object.entries(categorizedGames).map(([category, categoryGames]) => (
+      {Object.entries(filteredCategories).map(([category, categoryGames]) => (
         <div key={category} className="mb-8">
           <h2 className="text-lg font-bold mb-3">{category}</h2>
           <div className="flex gap-6 overflow-x-scroll whitespace-nowrap scrollbar-hide">
@@ -145,11 +120,7 @@ const GameList: React.FC<{ searchTerm: string }> = ({ searchTerm }) => {
                   className="relative w-40 h-40 md:w-48 md:h-48 lg:w-56 lg:h-56 rounded-3xl overflow-hidden shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300 cursor-pointer"
                 >
                   <img
-                    src={
-                      game.thumbnailUrl ||
-                      favicons[game.id] || 
-                      "/default-game-thumbnail.jpg" 
-                    }
+                    src={game.thumbnailUrl || "/default-game-thumbnail.jpg"}
                     alt={game.title}
                     width={250}
                     height={250}

@@ -37,6 +37,7 @@ const GamePage: React.FC<GamePageProps> = ({ match }) => {
   const [error, setError] = useState<string | null>(null);
   const [showPlayer, setShowPlayer] = useState<boolean>(false);
   const [saved, setSaved] = useState<boolean>(false);
+  const API_URL = "http://localhost:3000";
 
   const id = match.params.id;
 
@@ -60,18 +61,27 @@ const GamePage: React.FC<GamePageProps> = ({ match }) => {
     try {
       setLoading(true);
       console.log(`Fetching game with ID: ${id}`);
-      const API_URL = "https://zoey-back-production.up.railway.app";
-      const response = await axios.get(`${API_URL}/api/games?gid=${id}`);
+      const response = await axios.get(`${API_URL}/api/games`);
       
       console.log("API Response:", response.data);
   
       if (response.data && response.data.games) {
-        let foundGame = response.data.games.find((g: Game) => g.id.toString() === id);
+        let foundGame: Game | null = null;
+  
+        // Loop through each category to find the game
+        for (const categoryName in response.data.games) {
+          if (Object.prototype.hasOwnProperty.call(response.data.games, categoryName)) {
+            const gamesArray = response.data.games[categoryName];
+            foundGame = gamesArray.find((g: Game) => g.id.toString() === id);
+  
+            if (foundGame) break; // Exit the loop once the game is found
+          }
+        }
   
         if (foundGame) {
           // Convert game title to lowercase for case-insensitive comparison
           const gameKey = foundGame.title.toLowerCase();
-          
+  
           if (gameFallbacks[gameKey]) {
             foundGame = {
               ...foundGame,
@@ -94,6 +104,7 @@ const GamePage: React.FC<GamePageProps> = ({ match }) => {
       setLoading(false);
     }
   }, [id]);
+  
   
   
   useEffect(() => {
@@ -262,6 +273,7 @@ const RelevantGames = ({ category }: { category?: string[] }) => {
   const [games, setGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const API_URL = "http://localhost:3000";
 
   useEffect(() => {
     if (!category || category.length === 0) return; 
@@ -276,7 +288,6 @@ const RelevantGames = ({ category }: { category?: string[] }) => {
   
     try {
       setLoading(true);
-      const API_URL = "https://zoey-back-production.up.railway.app";
       const response = await axios.get(`${API_URL}/api/games?category=${category.join(",")}`);      
       setGames(response.data.data);
     } catch (err) {

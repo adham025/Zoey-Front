@@ -1,4 +1,5 @@
 export type Game = {
+  categoryOrder: number; 
   order: number;
   id: string;
   title: string;
@@ -32,8 +33,9 @@ export type Game = {
 };
 
 export type Category = {
-  id: string;
+ _id: string;
   name: string;
   description: string;
   games: Game[];
+  order: Number;
 };
