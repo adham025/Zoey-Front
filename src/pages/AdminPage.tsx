@@ -217,6 +217,7 @@ const AdminPage: React.FC = () => {
 
   // Save Order to the Backend
   const saveOrder = async () => {
+    setLoading(true);
     try {
       const updatedCategories = categories.map((category, index) => ({
         _id: category._id,
@@ -230,6 +231,35 @@ const AdminPage: React.FC = () => {
     } catch (error) {
       setToastMessage("Failed to save the reordered categories.");
       console.error("Error saving order:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Handle Reorder
+  const handleReorderApis = (event: CustomEvent) => {
+    const reorderedApis = event.detail.complete(apis);
+    setApis(reorderedApis);
+  };
+
+  // Save Order to the Backend
+  const saveOrderApis = async () => {
+    setLoading(true);
+    try {
+      const updatedApis = apis.map((api, index) => ({
+        _id: api._id,
+        order: index + 1,
+      }));
+
+      const response = await axios.patch(`${API_URL}/api/reorder`, {
+        updatedApis,
+      });
+      setToastMessage(response.data.message);
+    } catch (error) {
+      setToastMessage("Failed to save the reordered APIs.");
+      console.error("Error saving order:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -401,6 +431,7 @@ const AdminPage: React.FC = () => {
         </IonCard>
         {loading && <IonSpinner name="crescent" className="ion-margin" />}
         {/* Existing APIs Section */}
+        {/* Existing APIs Section */}
         <IonCard>
           <IonCardHeader>
             <IonCardTitle>Existing APIs</IonCardTitle>
@@ -409,52 +440,62 @@ const AdminPage: React.FC = () => {
             {apis.length === 0 ? (
               <IonLabel>No APIs available.</IonLabel>
             ) : (
-              <IonList>
-                {apis.map((api) => (
-                  <IonItem key={api._id} className="api-item">
-                    <IonLabel>
-                      <strong>{api.api_name}</strong>
-                      <p>{api.api_url}</p>
-                      <p>
-                        Category: {api.categoryId ? api.categoryId.name : "N/A"}
-                      </p>
-                    </IonLabel>
-                    {api.api_image && api.api_image.startsWith("http") && (
-                      <img
-                        src={api.api_image}
-                        alt={api.api_name}
-                        width={toggledImage === api.api_image ? 250 : 70}
-                        height={toggledImage === api.api_image ? 250 : 70}
-                        onClick={() => toggleImage(api.api_image)}
-                        style={{
-                          cursor: "pointer",
-                          borderRadius: "10px",
-                          transition: "all 0.3s ease-in-out",
-                          boxShadow:
-                            toggledImage === api.api_image
-                              ? "0px 4px 10px rgba(0,0,0,0.2)"
-                              : "none",
-                          objectFit: "cover",
-                        }}
-                      />
-                    )}
-                    <IonButton
-                      color="primary"
-                      size="small"
-                      onClick={() => setEditingApi(api)}
-                    >
-                      Edit
-                    </IonButton>
-                    <IonButton
-                      color="danger"
-                      size="small"
-                      onClick={() => handleDeleteApi(api._id)}
-                    >
-                      Delete
-                    </IonButton>
-                  </IonItem>
-                ))}
-              </IonList>
+              <>
+                <IonReorderGroup
+                  disabled={false}
+                  onIonItemReorder={handleReorderApis}
+                >
+                  {apis.map((api) => (
+                    <IonItem key={api._id} className="api-item">
+                      <IonReorder slot="start" />
+                      <IonLabel>
+                        <strong>{api.api_name}</strong>
+                        <p>{api.api_url}</p>
+                        <p>
+                          Category:{" "}
+                          {api.categoryId ? api.categoryId.name : "N/A"}
+                        </p>
+                      </IonLabel>
+                      {api.api_image && api.api_image.startsWith("http") && (
+                        <img
+                          src={api.api_image}
+                          alt={api.api_name}
+                          width={toggledImage === api.api_image ? 250 : 70}
+                          height={toggledImage === api.api_image ? 250 : 70}
+                          onClick={() => toggleImage(api.api_image)}
+                          style={{
+                            cursor: "pointer",
+                            borderRadius: "10px",
+                            transition: "all 0.3s ease-in-out",
+                            boxShadow:
+                              toggledImage === api.api_image
+                                ? "0px 4px 10px rgba(0,0,0,0.2)"
+                                : "none",
+                            objectFit: "cover",
+                          }}
+                        />
+                      )}
+                      <IonButton
+                        color="primary"
+                        size="small"
+                        onClick={() => setEditingApi(api)}
+                      >
+                        Edit
+                      </IonButton>
+                      <IonButton
+                        color="danger"
+                        size="small"
+                        onClick={() => handleDeleteApi(api._id)}
+                      >
+                        Delete
+                      </IonButton>
+                    </IonItem>
+                  ))}
+                </IonReorderGroup>
+                <IonButton expand="block" onClick={saveOrderApis}>
+                  Save Order
+                </IonButton>
+              </>
             )}
             {editingApi && (
               <IonCard>
@@ -527,6 +568,7 @@ const AdminPage: React.FC = () => {
             )}
           </IonCardContent>
         </IonCard>
+
         <IonToast
           isOpen={!!toastMessage}
           message={toastMessage}
