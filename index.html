@@ -30,11 +30,15 @@
       crossorigin="anonymous"
     ></script>
 
-    <!-- adsterra ads -->
-    <script
-      type="text/javascript"
-      src="//pl26021543.effectiveratecpm.com/04/c7/f3/04c7f3f28718ec43b6fe63d7d9d89af4.js"
-    ></script>
+    <script>
+      setTimeout(() => {
+        let adScript = document.createElement("script");
+        adScript.type = "text/javascript";
+        adScript.src =
+          "//pl26021543.effectiveratecpm.com/04/c7/f3/04c7f3f28718ec43b6fe63d7d9d89af4.js";
+        document.body.appendChild(adScript);
+      }, 60000);
+    </script>
 
     <script>
       if (!sessionStorage.getItem("adShown")) {
