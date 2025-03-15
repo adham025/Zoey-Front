@@ -37,7 +37,8 @@ const GamePage: React.FC<GamePageProps> = ({ match }) => {
   const [error, setError] = useState<string | null>(null);
   const [showPlayer, setShowPlayer] = useState<boolean>(false);
   const [saved, setSaved] = useState<boolean>(false);
-  const API_URL = "http://localhost:3000";
+  // const API_URL = "http://localhost:3000";
+  const API_URL = "https://zoey-back-production.up.railway.app/";
 
   const id = match.params.id;
 

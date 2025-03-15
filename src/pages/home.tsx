@@ -62,7 +62,8 @@ const GameList: React.FC<{ searchTerm: string }> = ({ searchTerm }) => {
   >({});
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const API_URL = "http://localhost:3000";
+  // const API_URL = "http://localhost:3000";
+  const API_URL = "https://zoey-back-production.up.railway.app/";
 
   const fetchAllGames = useCallback(async () => {
     try {
