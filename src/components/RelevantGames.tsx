@@ -12,7 +12,7 @@ const RelevantGames: React.FC<RelevantGamesProps> = ({ category }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   // const API_URL = "http://localhost:3000";
-  const API_URL = "https://zoey-back-production.up.railway.app/";
+  const API_URL = "https://zoey-back-production.up.railway.app";
 
   const fetchGames = useCallback(async () => {
     if (!category || !Array.isArray(category)) return;

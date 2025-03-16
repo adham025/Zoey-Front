@@ -46,7 +46,8 @@ import "@ionic/react/css/palettes/dark.system.css";
 import "./theme/variables.css";
 import "./theme/main.css";
 
-import { LuHeart, LuHome, LuList, LuUser } from "react-icons/lu";
+import { LuHeart, LuUser } from "react-icons/lu";
+import { CiHome  } from "react-icons/ci";
 import { BiCategory } from "react-icons/bi";
 import CategoryPage from "./pages/category";
 import SavedGamesPage from "./pages/savedGames";
@@ -90,7 +91,7 @@ const App: React.FC = () => (
     </IonTabButton>
   )}
   <IonTabButton tab="home" href="/home">
-    <LuHome className="text-2xl" />
+    <CiHome className="text-2xl" />
     <IonLabel>Home</IonLabel>
   </IonTabButton>
   <IonTabButton tab="categories" href="/categories">

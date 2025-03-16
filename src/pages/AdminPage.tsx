@@ -37,7 +37,7 @@ const AdminPage: React.FC = () => {
   const [toastMessage, setToastMessage] = useState("");
   const [toggledImage, setToggledImage] = useState<string | null>(null);
   // const API_URL = "http://localhost:3000";
-  const API_URL = "https://zoey-back-production.up.railway.app/";
+  const API_URL = "https://zoey-back-production.up.railway.app";
 
   useEffect(() => {
     fetchApis();

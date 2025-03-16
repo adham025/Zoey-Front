@@ -13,7 +13,6 @@ import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { heart } from "ionicons/icons";
 import type { Game } from "../types";
-import type { Category } from "../types";
 import { Link } from "react-router-dom";
 
 const HomePage: React.FC = () => {
@@ -57,19 +56,17 @@ const HomePage: React.FC = () => {
 };
 
 const GameList: React.FC<{ searchTerm: string }> = ({ searchTerm }) => {
-  const [categoriesWithGames, setCategoriesWithGames] = useState<
-    Record<string, Game[]>
-  >({});
+  const [categoriesWithGames, setCategoriesWithGames] = useState<Record<string, Game[]>>({});
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   // const API_URL = "http://localhost:3000";
-  const API_URL = "https://zoey-back-production.up.railway.app/";
+  const API_URL = "https://zoey-back-production.up.railway.app";
 
   const fetchAllGames = useCallback(async () => {
     try {
       setLoading(true);
       const response = await axios.get(`${API_URL}/api/games`);
-      const categorizedGames = response.data.games;
+      const categorizedGames = response.data?.games || {};
       setCategoriesWithGames(categorizedGames);
     } catch (err) {
       setError("Failed to fetch games");
@@ -77,13 +74,14 @@ const GameList: React.FC<{ searchTerm: string }> = ({ searchTerm }) => {
       setLoading(false);
     }
   }, []);
+  
 
   useEffect(() => {
     fetchAllGames();
   }, [fetchAllGames]);
 
   // Filter games based on search term
-  const filteredCategories = Object.keys(categoriesWithGames).reduce(
+  const filteredCategories = Object.keys(categoriesWithGames || {}).reduce(
     (acc, category) => {
       const filteredGames = categoriesWithGames[category].filter(
         (game) =>
